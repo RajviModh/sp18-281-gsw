@@ -24,6 +24,6 @@ https://github.com/nguyensjsu/team281-gsw/projects
  <img src="https://avatars0.githubusercontent.com/u/32539378?s=400&v=4"  width="100" height="100"/>
   <img src="https://avatars2.githubusercontent.com/u/31807189?v=4&s=400"  width="100" height="100"/>
  <br/>
- &nbsp;Madhur Gor &nbsp;&nbsp; Anurag Panchal &nbsp; Keval Shah &nbsp; Rohan Athavale &nbsp; Rajvi Modh
+ &nbsp;[Madhur Gor](https://github.com/madhurgor) &nbsp;&nbsp; [Anurag Panchal](https://github.com/anurag3110) &nbsp; [Keval Shah](https://github.com/shahkevaln) &nbsp; [Rohan Athavale](https://github.com/rohanath) &nbsp; [Rajvi Modh](https://github.com/RajviModh)
  
  
