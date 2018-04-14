@@ -6,6 +6,9 @@ To build a cloud scale SaaS Service on Amazon Cloud and Heroku using the basic s
 ## Project Journal Link:
 https://github.com/nguyensjsu/team281-gsw/blob/master/ProjectJournal.md
 
+## Project Board Link:
+https://github.com/nguyensjsu/team281-gsw/projects
+
 ## Technologies used in the project:
 1. Front-End :
    NodeJS
