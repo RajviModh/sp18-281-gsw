@@ -13,12 +13,12 @@
  
 Challenges Faced:
  
- 1.
+ 1. Create replica set in MongoDB for making application partition tolerant and Highly available.
  2.
  
  
  To Be Done:
  
- 1.
+ 1. Create Load Balancer for reading data from MongoDB replica set
  2.
  
