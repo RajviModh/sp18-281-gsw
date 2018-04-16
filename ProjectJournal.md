@@ -6,7 +6,7 @@
  
  Tasks Done:
  1. Each Team member performed the analysis of the article on the document.
- 2.
+ 2. Discussed the PROS and CONS of all the databases as per analysis done by each team member
  3.
  4.
  5.
@@ -14,11 +14,12 @@
 Challenges Faced:
  
  1. Create replica set in MongoDB for making application partition tolerant and Highly available.
- 2.
+ 2. Learn Go for developing APIs
  
  
  To Be Done:
  
  1. Create Load Balancer for reading data from MongoDB replica set
- 2.
+ 2. Decide project definition
+ 3. Decide the APIs to be developed in Go
  
