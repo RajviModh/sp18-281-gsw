@@ -9,6 +9,10 @@ import (
 	"github.com/gorilla/mux"
 	"gopkg.in/mgo.v2/bson"
 	time2 "time"
+	"github.com/gorilla/sessions"
+	"github.com/gorilla/securecookie"
+	"encoding/json"
+	"log"
 )
 
 var (
@@ -90,12 +94,6 @@ type Item1 struct {
 type Description struct {
 	Name string `json:"name" bson:"Name"`
 	Desc string `json:"desc" bson:"Desc"`
-}
-
-type Cart struct {
-	CartId   string  `json:"id" bson:"_id"`
-	Items    []Item1 `json:"items" bson:"Items"`
-	Username string  `json:"username" bson:"Username"`
 }
 
 
@@ -259,17 +257,6 @@ func (lg LogOutController) logout(w http.ResponseWriter, r *http.Request) {
 
 //-----------------------------------------------------------Function Goes Here----------------------------------------------------------------
 
-func changeStatusToPlaced(orderId string, oc OrderController) {
-	fmt.Println("placed")
-	oc.session.DB("test").C("Order").UpdateId(orderId, bson.M{"$set": bson.M{"status": "PLACED"}})
-
-}
-
-func changeStatusToPaid(orderId string, oc OrderController) {
-	fmt.Println("paid")
-	oc.session.DB("test").C("Order").UpdateId(orderId, bson.M{"$set": bson.M{"status": "PAID"}})
-
-}
 
 //ping resource function
 func (oc OrderController) PingOrderResource(w http.ResponseWriter, r *http.Request) {
