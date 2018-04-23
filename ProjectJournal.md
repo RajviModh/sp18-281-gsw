@@ -7,9 +7,7 @@
  Tasks Done:
  1. Each Team member performed the analysis of the article on the document.
  2. Discussed the PROS and CONS of all the databases as per analysis done by each team member
- 3.
- 4.
- 5.
+ 
  
 Challenges Faced:
  
@@ -23,3 +21,15 @@ Challenges Faced:
  2. Decide project definition
  3. Decide the APIs to be developed in Go
  
+ 04/16/2018 - 04/22/2018 Week 2 
+Tasks Done:
+0.Each team member started developed GO APIs for the SaaS application
+0.Each team member did setup of their nodes on AWS along with their NoSQL DBs
+Challenges Faced:
+0.Learn Go for developing APIs
+0.Adding Database on 
+To Be Done:
+0.Create Load Balancer for reading data from MongoDB replica set
+0.Decide project definition
+0.Decide the APIs to be developed in Go
+
