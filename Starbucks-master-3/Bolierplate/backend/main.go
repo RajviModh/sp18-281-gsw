@@ -80,6 +80,32 @@ func NewOrderController(mgoSession *mgo.Session) *OrderController {
 	return &OrderController{mgoSession}
 }
 
+type IndexController struct {
+	session *mgo.Session
+}
+
+// NewOrderController provides a reference to a OrderController with provided mongo session
+
+func NewIndexController(mgoSession *mgo.Session) *IndexController {
+	return &IndexController{mgoSession}
+}
+
+func (sp IndexController) index(w http.ResponseWriter, r *http.Request) {
+	var options []Item
+
+	iter := sp.session.DB("cmpe281").C("User").Find(nil).Iter()
+	fmt.Println("Inside iter")
+	result := Item{}
+	for iter.Next(&result) {
+		options = append(options, result)
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(&options)
+
+}
+
 //-----------------------------------------------------------Code Goes Here------------------------------------------------------------------
 
 
@@ -129,6 +155,22 @@ func main() {
 	// Get a UserController instance
 	oc := NewOrderController(getSession())
 
+	// Get a UserController instance
+	ic := NewIndexController(getSession())
+
+	sp := NewSignUpController(getSession())
+
+	lc := NewLoginController(getSession())
+
+	lg := NewLogOutController(getSession())
+
+
+	
+	r.HandleFunc("/", ic.index).Methods("GET")
+	r.HandleFunc("/signup", ic.index).Methods("GET")
+	r.HandleFunc("/submitSignUp", sp.signup).Methods("POST")
+	r.HandleFunc("/login", lc.login).Methods("POST")
+	r.HandleFunc("/logout", lg.logout).Methods("GET")
 
 	r.Methods("OPTIONS").HandlerFunc(IgnoreOption)
 
