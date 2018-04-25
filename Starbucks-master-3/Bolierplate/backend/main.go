@@ -297,6 +297,9 @@ func main() {
 
 	r.HandleFunc("/ping", oc.PingOrderResource)
 
+
+	r.HandleFunc("/starbucks/getCartItems", oc.GetCartItems).Methods("GET")
+
 	fmt.Println("serving on port" + GetPort())
 
 	http.ListenAndServe(GetPort(), r)
