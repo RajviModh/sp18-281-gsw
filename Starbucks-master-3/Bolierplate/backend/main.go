@@ -95,7 +95,11 @@ type Description struct {
 	Name string `json:"name" bson:"Name"`
 	Desc string `json:"desc" bson:"Desc"`
 }
-
+type Cart struct {
+	CartId   string  `json:"id" bson:"_id"`
+	Items    []Item1 `json:"items" bson:"Items"`
+	Username string  `json:"username" bson:"Username"`
+}
 
 
 // OrderController represents the controller for operating on the Order resource
