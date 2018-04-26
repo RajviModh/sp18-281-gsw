@@ -99,14 +99,6 @@ type Cart struct {
 }
 
 
-type User struct {
-	UserName  string  `json:"username" bson:"username"`
-	Password  string  `json:"password" bson:"password"`
-	FirstName string  `json:"firstname" bson:"firstname"`
-	LastName  string  `json:"lastname" bson:"lastname"`
-	Credits   int `json:"credits" bson:"credits"`
-	Location  string  `json:"location" bson:"location"`
-}
 
 // OrderController represents the controller for operating on the Order resource
 type OrderController struct {
@@ -146,7 +138,50 @@ func (sp IndexController) index(w http.ResponseWriter, r *http.Request) {
 
 //-----------------------------------------------------------Code Goes Here------------------------------------------------------------------
 
+// OrderController represents the controller for operating on the Order resource
+type SignUpController struct {
+	session *mgo.Session
+}
 
+type User struct {
+	UserName  string `json:"username" bson:"username"`
+	Password  string `json:"password" bson:"password"`
+	FirstName string `json:"firstname" bson:"firstname"`
+	LastName  string `json:"lastname" bson:"lastname"`
+	Credits   float32 `json:"credits" bson:"credits"`
+	Location string `json:"location" bson:"location"`
+}
+
+
+
+// NewOrderController provides a reference to a OrderController with provided mongo session
+
+func NewSignUpController(mgoSession *mgo.Session) *SignUpController {
+	return &SignUpController{mgoSession}
+}
+
+func (sp SignUpController) signup(w http.ResponseWriter, r *http.Request) {
+
+
+	fname := r.FormValue("fname")
+	lname := r.FormValue("lname")
+	uname := r.FormValue("email")
+	pass := r.FormValue("password")
+	loc := r.FormValue("location")
+
+	fmt.Println(fname)
+	fmt.Println(lname)
+	fmt.Println(uname)
+	fmt.Println(pass)
+	fmt.Println(loc)
+	iter := sp.session.DB("cmpe281").C("User")
+	err := iter.Insert(&User{FirstName: fname, LastName: lname,UserName: uname, Password: pass, Location:loc})
+
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(err)
+}
 
 
 
