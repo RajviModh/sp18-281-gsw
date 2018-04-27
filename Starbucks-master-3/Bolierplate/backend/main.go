@@ -7,12 +7,9 @@ import (
 
 	"gopkg.in/mgo.v2"
 	"github.com/gorilla/mux"
-	"gopkg.in/mgo.v2/bson"
-	time2 "time"
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/securecookie"
 	"encoding/json"
-	"log"
 )
 
 var (
@@ -156,101 +153,6 @@ type User struct {
 
 
 
-// NewOrderController provides a reference to a OrderController with provided mongo session
-
-func NewSignUpController(mgoSession *mgo.Session) *SignUpController {
-	return &SignUpController{mgoSession}
-}
-
-func (sp SignUpController) signup(w http.ResponseWriter, r *http.Request) {
-
-
-	fname := r.FormValue("fname")
-	lname := r.FormValue("lname")
-	uname := r.FormValue("email")
-	pass := r.FormValue("password")
-	loc := r.FormValue("location")
-
-	fmt.Println(fname)
-	fmt.Println(lname)
-	fmt.Println(uname)
-	fmt.Println(pass)
-	fmt.Println(loc)
-	iter := sp.session.DB("cmpe281").C("User")
-	err := iter.Insert(&User{FirstName: fname, LastName: lname,UserName: uname, Password: pass, Location:loc})
-
-	if err != nil {
-		panic(err)
-	}
-	fmt.Println(err)
-}
-
-
-type LoginController struct {
-	session *mgo.Session
-}
-
-func NewLoginController(mgoSession *mgo.Session) *LoginController {
-	return &LoginController{mgoSession}
-}
-
-func (lc LoginController) login(w http.ResponseWriter, r *http.Request) {
-
-	session, _ := store.Get(r, "cookie-name")
-
-	uname := r.FormValue("email")
-	pass := r.FormValue("password")
-
-	fmt.Println(uname)
-	fmt.Println(pass)
-
-	result := User{}
-	err := lc.session.DB("cmpe281").C("User").Find(bson.M{"username": uname}).One(&result)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if pass == result.Password {
-		fmt.Println("Success")
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(200)
-
-		session.Values["authenticated"] = true
-		session.Save(r, w)
-		setSession(uname, w)
-
-
-	} else {
-		w.WriteHeader(202)
-	}
-
-}
-
-
-type LogOutController struct {
-	session *mgo.Session
-}
-
-func NewLogOutController(mgoSession *mgo.Session) *LogOutController {
-	return &LogOutController{mgoSession}
-}
-
-func (lg LogOutController) logout(w http.ResponseWriter, r *http.Request) {
-
-	session, _ := store.Get(r, "cookie-name")
-	clearSession(w)
-	// Revoke users authentication
-	session.Values["authenticated"] = false
-	session.Save(r, w)
-
-}
-
-
-
-
-
-
 
 
 
@@ -279,19 +181,11 @@ func main() {
 	// Get a UserController instance
 	ic := NewIndexController(getSession())
 
-	sp := NewSignUpController(getSession())
-
-	lc := NewLoginController(getSession())
-
-	lg := NewLogOutController(getSession())
 
 
 	
 	r.HandleFunc("/", ic.index).Methods("GET")
-	r.HandleFunc("/signup", ic.index).Methods("GET")
-	r.HandleFunc("/submitSignUp", sp.signup).Methods("POST")
-	r.HandleFunc("/login", lc.login).Methods("POST")
-	r.HandleFunc("/logout", lg.logout).Methods("GET")
+
 
 	r.Methods("OPTIONS").HandlerFunc(IgnoreOption)
 
