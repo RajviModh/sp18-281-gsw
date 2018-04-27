@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"net/http"
 	time2 "time"
+	"github.com/gorilla/mux"
+	"gopkg.in/mgo.v2/bson"
 )
 
 type Order struct {
@@ -33,7 +35,7 @@ func (oc OrderController) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(o.Items[0])
 	// Add an Id, using uuid for
 	var orderId uuid.UUID
-	orderId, _ = uuid.NewV4()
+	orderId = uuid.NewV4()
 	o.OrderId = orderId.String()
 
 	o.Status = "PLACED"

@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"encoding/json"
 )

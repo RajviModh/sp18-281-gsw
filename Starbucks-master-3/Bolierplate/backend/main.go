@@ -156,6 +156,7 @@ func main() {
 
 
 	r.HandleFunc("/starbucks/getCartItems", oc.GetCartItems).Methods("GET")
+	r.HandleFunc("/starbucks/cart/quantity", oc.DeleteItems).Methods("POST")
 
 	fmt.Println("serving on port" + GetPort())
 
