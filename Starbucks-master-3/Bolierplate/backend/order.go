@@ -8,6 +8,19 @@ import (
 	time2 "time"
 )
 
+type Order struct {
+	OrderId     string     `json:"id" bson:"_id"`
+	UserName    string     `json:"username" bson:"username"`
+	Location    string     `json:"location" bson:"location"`
+	Items       []Item     `json:"items" bson:"items"`
+	Status      string     `json:"status" bson:"status"`
+	Message     string     `json:"message" bson:"message"`
+	Links       Links      `json:"links" bson:"links"`
+	TotalAmount int    `json:"totalAmount" bson:"totalAmount"`
+	OrderDate   time2.Time `json: "orderDate" bson: "orderDate"`
+	PaymentDate time2.Time `json: "paymentDate" bson: "paymentDate"`
+}
+
 func (oc OrderController) CreateOrder(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("inside createorder	")
@@ -42,4 +55,31 @@ func (oc OrderController) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(201)
 	json.NewEncoder(w).Encode(o)
+}
+
+func (oc OrderController) GetAllOrders(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	username := vars["username"]
+	fmt.Println(username)
+	var orders []Order
+	iter := oc.session.DB("test").C("Order").Find(bson.M{"username": username}).Iter()
+	result := Order{}
+	for iter.Next(&result) {
+		orders = append(orders, result)
+	}
+
+	for _, order := range orders {
+		//fmt.Println(order.OrderId)
+		//fmt.Println(order.Items[0])
+		fmt.Println("--- ", order.OrderId)
+		fmt.Println("---", order.Location)
+		//fmt.Println("------------",order.Items)
+	}
+
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(&orders)
+
 }

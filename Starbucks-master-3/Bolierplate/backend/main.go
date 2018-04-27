@@ -50,19 +50,6 @@ func clearSession(response http.ResponseWriter) {
 	http.SetCookie(response, cookie)
 }
 
-type Order struct {
-	OrderId     string     `json:"id" bson:"_id"`
-	UserName    string     `json:"username" bson:"username"`
-	Location    string     `json:"location" bson:"location"`
-	Items       []Item     `json:"items" bson:"items"`
-	Status      string     `json:"status" bson:"status"`
-	Message     string     `json:"message" bson:"message"`
-	Links       Links      `json:"links" bson:"links"`
-	TotalAmount int    `json:"totalAmount" bson:"totalAmount"`
-	OrderDate   time2.Time `json: "orderDate" bson: "orderDate"`
-	PaymentDate time2.Time `json: "paymentDate" bson: "paymentDate"`
-}
-
 type Links struct {
 	Payment string `json:"payment,omitempty"`
 	Order   string `json:"order,omitempty"`
@@ -159,7 +146,7 @@ func main() {
 
 
 
-	
+
 	r.HandleFunc("/", ic.index).Methods("GET")
 
 
