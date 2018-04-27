@@ -85,3 +85,25 @@ func (oc OrderController) GetAllOrders(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&orders)
 
 }
+
+func (oc OrderController) GetOrder(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	orderId := vars["id"]
+
+	o := Order{}
+	fmt.Println("------Order Id------", orderId)
+	// Fetch order
+	if err := oc.session.DB("test").C("Order").FindId(orderId).One(&o); err != nil {
+		w.WriteHeader(404)
+
+		data := `{"status":"error","message":"Order not found"}`
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+	fmt.Println(o)
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(o)
+}
