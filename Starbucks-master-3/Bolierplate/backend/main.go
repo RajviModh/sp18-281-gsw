@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-
 	"gopkg.in/mgo.v2"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/sessions"
@@ -100,10 +99,7 @@ func (sp IndexController) index(w http.ResponseWriter, r *http.Request) {
 
 //-----------------------------------------------------------Code Goes Here------------------------------------------------------------------
 
-// OrderController represents the controller for operating on the Order resource
-type SignUpController struct {
-	session *mgo.Session
-}
+// SignUpController represents the controller for operating on the SignUp resource
 
 type User struct {
 	UserName  string `json:"username" bson:"username"`
@@ -114,6 +110,37 @@ type User struct {
 	Location string `json:"location" bson:"location"`
 }
 
+// SignUpController represents the controller for operating on the SignUp resource
+type SignUpController struct {
+	session *mgo.Session
+}
+
+// NewSignUpController provides a reference to a OrderController with provided mongo session
+
+func NewSignUpController(mgoSession *mgo.Session) *SignUpController {
+	return &SignUpController{mgoSession}
+}
+
+func (sp SignUpController) signup(w http.ResponseWriter, r *http.Request) {
+
+	fname := r.FormValue("fname")
+	lname := r.FormValue("lname")
+	uname := r.FormValue("email")
+	pass := r.FormValue("password")
+	loc := r.FormValue("location")
+
+	fmt.Println(fname)
+	fmt.Println(lname)
+	fmt.Println(uname)
+	fmt.Println(pass)
+	iter := sp.session.DB("test").C("User")
+	err := iter.Insert(&User{FirstName: fname, LastName: lname, UserName: uname, Password: pass, Location: loc})
+
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(err)
+}
 
 
 
@@ -144,6 +171,7 @@ func main() {
 	// Get a UserController instance
 	ic := NewIndexController(getSession())
 
+	sp := NewSignUpController(getSession())
 
 
 
@@ -151,6 +179,10 @@ func main() {
 
 
 	r.Methods("OPTIONS").HandlerFunc(IgnoreOption)
+
+	r.HandleFunc("/", ic.index).Methods("GET")
+	r.HandleFunc("/signup", ic.index).Methods("GET")
+	r.HandleFunc("/submitSignUp", sp.signup).Methods("POST")
 
 	r.HandleFunc("/ping", oc.PingOrderResource)
 
