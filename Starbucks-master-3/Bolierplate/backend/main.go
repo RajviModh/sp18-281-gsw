@@ -223,12 +223,26 @@ func (lc LoginController) login(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(202)
 	}
 
-
-
 }
 
 
+type LogOutController struct {
+	session *mgo.Session
+}
 
+func NewLogOutController(mgoSession *mgo.Session) *LogOutController {
+	return &LogOutController{mgoSession}
+}
+
+func (lg LogOutController) logout(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := store.Get(r, "cookie-name")
+	clearSession(w)
+	// Revoke users authentication
+	session.Values["authenticated"] = false
+	session.Save(r, w)
+
+}
 
 
 
