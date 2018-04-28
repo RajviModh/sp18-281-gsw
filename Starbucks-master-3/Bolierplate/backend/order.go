@@ -107,3 +107,82 @@ func (oc OrderController) GetOrder(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(200)
 	json.NewEncoder(w).Encode(o)
 }
+
+func (oc OrderController) OrderPayment(w http.ResponseWriter, r *http.Request) {
+	//fmt.Println("inside createorder	")
+	vars := mux.Vars(r)
+	orderId := vars["id"]
+	order := Order{}
+	fmt.Println("pay order")
+	fmt.Println(orderId)
+
+	//call get order method
+	// Fetch order
+	if err := oc.session.DB("test").C("Order").FindId(orderId).One(&order); err != nil {
+		w.WriteHeader(404)
+		return
+	}
+
+	json.NewDecoder(r.Body).Decode(&order)
+	//order.Status :="PAID"
+	fmt.Println(order)
+	username := order.UserName //change to the value fetched from session
+	totalAmount := order.TotalAmount
+
+	fmt.Println(username)
+	var user User
+	if error := oc.session.DB("test").C("User").Find(bson.M{"username": username}).One(&user); error != nil {
+		fmt.Println(error)
+		w.WriteHeader(400)
+		data := `{"status":"error","message":"User doesn't exist anymore'"}`
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	fmt.Println(user.FirstName)
+	fmt.Println(user)
+	/*	user.FirstName = "Anurag"
+		user.LastName = "Panchal"*/
+	credits := user.Credits
+	fmt.Println(credits)
+	credits -= totalAmount
+	fmt.Println(credits)
+	if credits < 0 {
+		w.WriteHeader(400)
+		data := `{"status":"error","message":"Not enough credits"}`
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+	error := oc.session.DB("test").C("User").Update(bson.M{"username": username}, bson.M{"$set": bson.M{"credits": credits}})
+	fmt.Println(error)
+	oc.session.DB("test").C("User").Find(bson.M{"username": username}).One(&user)
+	credits = user.Credits
+	fmt.Println("Updated credits:", credits)
+	/*if order.Status == "PAID" || order.Status == "PREPARING" || order.Status == "SERVED" || order.Status == "COLLECTED" {
+		w.WriteHeader(400)
+		data := `{"status":"error","message":"Order payment rejected "}`
+		json.NewEncoder(w).Encode(data)
+		return
+	}*/
+
+	//code to update status to paid goes here
+
+	oc.session.DB("test").C("Order").UpdateId(orderId, bson.M{"$set": bson.M{"status": "PAID", "message": "Payment Accepted", "paymentDate": time2.Now()}})
+	//oc.session.DB("test").C("Order").UpdateId(orderId, bson.M{"$unset": bson.M{"Links.Payment": ""}})
+	fmt.Println("Order Status Updated: ", order.Status)
+
+	// Fetch order
+	if err := oc.session.DB("test").C("Order").FindId(orderId).One(&order); err != nil {
+		w.WriteHeader(404)
+		data := `{"status":"error","message":"Order not found"}`
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+	// to stop displaying payment after clicking on order pay(since payment set to omit empty)
+	//order.Links.Payment = ""
+	// Write content-type, statuscode, payload
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(201)
+	json.NewEncoder(w).Encode(order)
+}
+

@@ -193,6 +193,7 @@ func main() {
 	r.HandleFunc("/starbucks/order", oc.CreateOrder).Methods("POST")
 	r.HandleFunc("/starbucks/orders/{username}", oc.GetAllOrders).Methods("GET")
 	r.HandleFunc("/starbucks/order/{id}", oc.GetOrder).Methods("GET")
+	r.HandleFunc("/starbucks/order/{id}", oc.OrderPayment).Methods("PUT")
 
 	fmt.Println("serving on port" + GetPort())
 
