@@ -186,3 +186,28 @@ func (oc OrderController) OrderPayment(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(order)
 }
 
+func (oc OrderController) AddCredits(w http.ResponseWriter, r *http.Request) {
+	user := User{}
+	json.NewDecoder(r.Body).Decode(&user)
+	creditsToAdd := user.Credits
+	if error := oc.session.DB("test").C("User").Find(bson.M{"username": user.UserName}).One(&user); error != nil {
+		fmt.Println(error)
+		w.WriteHeader(400)
+		data := `{"status":"error","message":"User doesn't exist anymore'"}`
+		json.NewEncoder(w).Encode(data)
+		return
+	} else {
+		user.Credits += creditsToAdd
+		if error := oc.session.DB("test").C("User").Update(bson.M{"username": user.UserName}, bson.M{"$set": bson.M{"credits": user.Credits}}); error != nil {
+			w.WriteHeader(400)
+			data := `{"status":"error","message":"No such user!"}`
+			json.NewEncoder(w).Encode(data)
+			return
+		} else {
+			w.Header().Set("Content-Type", "application/json")
+			w.WriteHeader(200)
+			json.NewEncoder(w).Encode(user)
+		}
+	}
+
+}
