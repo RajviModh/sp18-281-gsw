@@ -67,6 +67,32 @@ func (oc OrderController) DeleteItems(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 	}
 }
+/ Delete Cart deletes the entire item
+func (oc OrderController) DeleteCart(w http.ResponseWriter, r *http.Request) {
+
+	var item1 Item
+	fmt.Println(r)
+	orderid := r.FormValue("id")
+	data := r.FormValue("data")
+
+	json.Unmarshal([]byte(data), &item1)
+	fmt.Printf("%+v\n", item1)
+
+	itemname := item1.Name
+
+	fmt.Println("--------%%%%%%%%In DELETE%%%%%%%%%%------------", orderid, data, itemname)
+
+	// Delete order
+	if err := oc.session.DB("test").C("Cart").Update(bson.M{"_id": orderid}, bson.M{"$pull": bson.M{"Items": bson.M{"Name": itemname}}}); err != nil {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+
+		data := `{"status":"success","message":"Order Items has been deleted"}`
+		json.NewEncoder(w).Encode(data)
+	}
+
+}
 //-----------------------------------------------------------Function Goes Here----------------------------------------------------------------
 
 func changeStatusToPlaced(orderId string, oc OrderController) {

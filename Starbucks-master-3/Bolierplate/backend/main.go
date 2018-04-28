@@ -189,6 +189,7 @@ func main() {
 
 	r.HandleFunc("/starbucks/getCartItems", oc.GetCartItems).Methods("GET")
 	r.HandleFunc("/starbucks/cart/quantity", oc.DeleteItems).Methods("POST")
+	r.HandleFunc("/starbucks/cart/delete", oc.DeleteCart).Methods("POST")
 	r.HandleFunc("/starbucks/getMenu", oc.GetOrders).Methods("GET")
 	r.HandleFunc("/starbucks/order", oc.CreateOrder).Methods("POST")
 	r.HandleFunc("/starbucks/orders/{username}", oc.GetAllOrders).Methods("GET")
