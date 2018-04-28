@@ -48,7 +48,7 @@ func (oc OrderController) GetOrders(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(&options)
 }
 
-// Get Item Informationx
+// Get Item Information
 
 /*func (oc OrderController) GetItemInfo(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
@@ -71,6 +71,67 @@ func (oc OrderController) GetOrders(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(result)
 }*/
 
+// Add to cart
+
+func (oc OrderController) AddToCart(w http.ResponseWriter, r *http.Request) {
+
+	cart := Cart{}
+	//username := r.FormValue("username")
+	//username := "Rajvi"
+	name := r.FormValue("name")
+	price, _ := strconv.Atoi(r.FormValue("price"))
+	calories, _ := strconv.Atoi(r.FormValue("calories"))
+	quantity := 1
+	
+	//fmt.Println(name)
+	//fmt.Println(price)
+	//fmt.Println(calories)
+	item := Item1{name,calories,price, quantity}
+	if error := oc.session.DB("test").C("Cart").Find(bson.M{"Username": username}).One(&cart); error != nil {
+		fmt.Println("errors:", error)
+	
+	var items []Item1
+		
+	items = append(items, item)
+	cart = Cart{items, username}
+	error = oc.session.DB("test").C("Cart").Insert(&cart)
+	fmt.Println("errors:", error)
+	} else {
+		if error := oc.session.DB("test").C("Cart").Find(bson.M{"Items.Name": name}).One(&cart); error == nil {
+			//means there's a cart with this item
+			fmt.Println("means there's a cart with this item")
+			fmt.Println(cart)
+
+			for i := 0; i < len(cart.Items); i++ {
+				if(cart.Items[i].Name == name){
+					cart.Items[i].Quantity += 1
+					break
+				}
+			}
+
+			if error := oc.session.DB("test").C("Cart").Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Items": cart.Items}}); error != nil {
+				fmt.Println(error)
+			}
+
+		} else {
+			//means there isn't an item
+			fmt.Println("means there isn't an item")
+			cart.Items = append (cart.Items, item)
+			if error := oc.session.DB("test").C("Cart").Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Items": cart.Items}}); error != nil {
+				fmt.Println(error)
+			}
+		}
+
+	}
+
+	fmt.Println("Added")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(200)
+
+	data := `{"status":"success","message":"Change successful"}`
+	json.NewEncoder(w).Encode(data)
+}
 
 func main() {
 
@@ -81,7 +142,7 @@ func main() {
 	r.Methods("OPTIONS").HandlerFunc(IgnoreOption)
 
 	r.HandleFunc("/starbucks/getMenu", oc.GetOrders).Methods("GET")
-	//r.HandleFunc("/starbucks/addToCart", oc.AddToCart).Methods("POST")
+	r.HandleFunc("/starbucks/addToCart", oc.AddToCart).Methods("POST")
 	fmt.Println("serving on port" + GetPort())
 	http.ListenAndServe(GetPort(), r)
 
