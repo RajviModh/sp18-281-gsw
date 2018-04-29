@@ -186,6 +186,24 @@ func (lc LoginController) login(w http.ResponseWriter, r *http.Request) {
 
 
 
+type LogOutController struct {
+	session *mgo.Session
+}
+
+func NewLogOutController(mgoSession *mgo.Session) *LogOutController {
+	return &LogOutController{mgoSession}
+}
+
+func (lg LogOutController) logout(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := store.Get(r, "cookie-name")
+	clearSession(w)
+	// Revoke users authentication
+	session.Values["authenticated"] = false
+	session.Save(r, w)
+
+}
+
 
 
 
@@ -225,6 +243,7 @@ func main() {
 	r.HandleFunc("/signup", ic.index).Methods("GET")
 	r.HandleFunc("/submitSignUp", sp.signup).Methods("POST")
 	r.HandleFunc("/login", lc.login).Methods("POST")
+	r.HandleFunc("/logout", lg.logout).Methods("GET")
 
 
 	r.HandleFunc("/ping", oc.PingOrderResource)
