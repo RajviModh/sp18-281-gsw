@@ -9,6 +9,8 @@ import (
 	"github.com/gorilla/sessions"
 	"github.com/gorilla/securecookie"
 	"encoding/json"
+	"gopkg.in/mgo.v2/bson"
+	"log"
 )
 
 var (
@@ -231,6 +233,7 @@ func main() {
 
 	lc := NewLoginController(getSession())
 
+	lg := NewLogOutController(getSession())
 
 
 

@@ -5,6 +5,7 @@ import (
 	"gopkg.in/mgo.v2/bson"
 	"net/http"
 	"encoding/json"
+	"github.com/gorilla/mux"
 )
 
 
@@ -13,23 +14,26 @@ import (
 
 
 // GetCartItems retrieves all the cart orders
+
 func (oc OrderController) GetCartItems(w http.ResponseWriter, r *http.Request) {
 
-	var cart []Cart
-	iter := oc.session.DB("test").C("Cart").Find(nil).Iter()
-	result := Cart{}
-	for iter.Next(&result) {
-		cart = append(cart, result)
-	}
+	fmt.Println(r)
+	vars := mux.Vars(r)
+	id := vars["username"]
 
-	for _, cart := range cart {
-		fmt.Println("--****************************- ", cart.Username, cart.Items)
-	}
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Content-Type", "application/json")
+	var cart Cart
+	if error := oc.session.DB("test").C("Cart").Find(bson.M{"Username": id}).One(&cart); error != nil {
+		fmt.Println(error)
+		w.WriteHeader(400)
+		data := `{"status":"error","message":"Cart doesn't exist for this user!"}`
+		json.NewEncoder(w).Encode(data)
+	} else {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Type", "application/json")
 
-	w.WriteHeader(200)
-	json.NewEncoder(w).Encode(&cart)
+		w.WriteHeader(200)
+		json.NewEncoder(w).Encode(&cart)
+	}
 
 }
 // Delete Items deletes the order with specified order id
@@ -67,7 +71,7 @@ func (oc OrderController) DeleteItems(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(data)
 	}
 }
-/ Delete Cart deletes the entire item
+// Delete Cart deletes the entire item
 func (oc OrderController) DeleteCart(w http.ResponseWriter, r *http.Request) {
 
 	var item1 Item
