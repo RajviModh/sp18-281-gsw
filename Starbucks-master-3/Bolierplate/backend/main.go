@@ -144,7 +144,45 @@ func (sp SignUpController) signup(w http.ResponseWriter, r *http.Request) {
 
 
 
+type LoginController struct {
+	session *mgo.Session
+}
 
+func NewLoginController(mgoSession *mgo.Session) *LoginController {
+	return &LoginController{mgoSession}
+}
+
+func (lc LoginController) login(w http.ResponseWriter, r *http.Request) {
+
+	session, _ := store.Get(r, "cookie-name")
+
+	uname := r.FormValue("email")
+	pass := r.FormValue("password")
+
+	fmt.Println(uname)
+	fmt.Println(pass)
+
+	result := User{}
+	err := lc.session.DB("test").C("User").Find(bson.M{"username": uname}).One(&result)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("sss" + result.Password)
+	if pass == result.Password {
+		fmt.Println("Success")
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(200)
+
+		session.Values["authenticated"] = true
+		session.Save(r, w)
+		setSession(uname, w)
+
+	} else {
+		w.WriteHeader(202)
+	}
+
+}
 
 
 
@@ -173,6 +211,9 @@ func main() {
 
 	sp := NewSignUpController(getSession())
 
+	lc := NewLoginController(getSession())
+
+
 
 
 	r.HandleFunc("/", ic.index).Methods("GET")
@@ -183,6 +224,8 @@ func main() {
 	r.HandleFunc("/", ic.index).Methods("GET")
 	r.HandleFunc("/signup", ic.index).Methods("GET")
 	r.HandleFunc("/submitSignUp", sp.signup).Methods("POST")
+	r.HandleFunc("/login", lc.login).Methods("POST")
+
 
 	r.HandleFunc("/ping", oc.PingOrderResource)
 
