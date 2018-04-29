@@ -287,7 +287,7 @@ func GetPort() string {
 
 func getSession() (s *mgo.Session) {
 	// Connect to local mongodb
-	s, _ = mgo.Dial("127.0.0.1:27017")
+	s, _ = mgo.Dial("mongodb://52.53.221.163:27017,18.144.65.114:27017,54.67.7.144:27017,13.56.13.62:27017,54.67.61.125:27017/?replicaSet=rs0")
 	fmt.Println(s)
 	return s
 }
