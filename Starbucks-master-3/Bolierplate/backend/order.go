@@ -211,3 +211,45 @@ func (oc OrderController) AddCredits(w http.ResponseWriter, r *http.Request) {
 	}
 
 }
+
+func (oc OrderController) DeleteOrder(w http.ResponseWriter, r *http.Request) {
+
+	fmt.Println(r)
+	id := r.FormValue("id")
+
+	fmt.Println("------$$$$$$$$$$$$$$-----------", id)
+
+	orderId := id
+
+	o := Order{}
+
+	// Fetch order
+	if err := oc.session.DB("test").C("Order").FindId(orderId).One(&o); err != nil {
+		w.WriteHeader(404)
+
+		data := `{"status":"error","message":"Order not found"}`
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	//check for status and then delete
+	if o.Status == "PAID" {
+		//fmt.Println("Order cannot be updated after payment has been made")
+		data := `{"status":"error","message":"Order cannot be deleted after payment has been made"}`
+		json.NewEncoder(w).Encode(data)
+		return
+		//http.Error(w, "Order cannot be updated after payment has been made", 400)
+	}
+	if err := oc.session.DB("test").C("Order").RemoveId(orderId); err != nil {
+		fmt.Println("Could not find order - %s to delete", orderId)
+		w.WriteHeader(404)
+		return
+	}
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(204)
+
+	data := `{"status":"success","message":"Order has been deleted"}`
+	json.NewEncoder(w).Encode(data)
+}
