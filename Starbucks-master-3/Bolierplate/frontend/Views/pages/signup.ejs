@@ -1,0 +1,75 @@
+<!doctype html>
+<html>
+<head>
+    <title>Node Authentication</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        body         { padding-top:80px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="col-sm-6 col-sm-offset-3">
+
+        <h1><span class="fa fa-sign-in"></span> Signup</h1>
+
+        <!-- LOGIN FORM -->
+        <form action="/submitSignUp" method="post">
+            <div class="form-group">
+                <label>First Name</label>
+                <input type="text" class="form-control" name="fname" required>
+            </div>
+            <div class="form-group">
+                <label>Last Name</label>
+                <input type="text" class="form-control" name="lname" required>
+            </div>
+            <div class="form-group">
+                <label>Location</label>
+            <select class="form-control" id="location" onchange="run();">
+
+                <option value="San Jose" >San Jose</option>
+                <option value="San Mateo">San Mateo</option>
+                <option value="San Francisco">San Francisco</option>
+            </select>
+            </div>
+            <div class="form-group">
+                <label>User Name</label>
+                <input type="text" class="form-control" name="username" required>
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" class="form-control" name="password" id="password" required>
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" class="form-control" name="cpassword" id="cpassword" required>
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-lg">Signup</button>
+        </form>
+
+        <hr>
+
+        <p>Already have an account? <a href="/">Login</a></p>
+
+
+    </div>
+</div>
+</body>
+<script>
+    var password = document.getElementById("password")
+        , confirm_password = document.getElementById("cpassword");
+
+    function validatePassword(){
+        if(password.value != confirm_password.value) {
+            confirm_password.setCustomValidity("Passwords Don't Match");
+        } else {
+            confirm_password.setCustomValidity('');
+        }
+    }
+
+    password.onchange = validatePassword;
+    confirm_password.onkeyup = validatePassword;
+</script>
+</html>
