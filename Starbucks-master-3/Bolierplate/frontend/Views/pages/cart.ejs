@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        hr {
+            background-color: darkgreen;
+            min-height: 10px;
+            margin-bottom: 0px
+        }
+        .button1 {
+            background-color: #4CAF50; /* Green */
+            border: none;
+            color: white;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 20px;
+        }
+        .button2 {
+            background-color: aliceblue; /* Green */
+            border: none;
+            color: mintcream;
+            padding: 20px;
+            width: 20px;
+            height: 60px;
+            text-align: center;
+            vertical-align: middle;
+            line-height: 1px;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: 30%;
+        }
+    </style>
+    <script>
+        function addItem(data) {
+            console.log(data);
+            data = JSON.parse(data);
+            var url = 'http://localhost:8000/incrementItem';
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => res.json()
+            )
+                .catch(error => console.error('Error:', error)
+                )
+                .then(response => console.log('Success:', response)
+                )
+            ;
+        }
+        function deleteItem(id, data) {
+            console.log(id);
+            console.log(data);
+            var url = 'http://localhost:8000/deleteItem';
+            data = {id: id, data: data};
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => res.json()
+            )
+                .catch(error => console.error('Error:', error)
+                )
+                .then(response => console.log('Success:', response)
+                )
+            ;
+        }
+        function deleteCart(id, data) {
+            //console.log(id);
+            // console.log(data);
+            var url = 'http://localhost:8000/deleteCart';
+            var data = {id: id, data: data};
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => res.json()
+            )
+                .catch(error => console.error('Error:', error)
+                )
+                .then(response => console.log('Success:', response)
+                )
+            ;
+        }
+        function placeOrder(cart) {
+            console.log("cart:" + cart)
+            cart = JSON.parse(cart);
+            console.log(cart);
+            let url = 'http://localhost:8000/order';
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(cart), // data can be `string` or {object}!
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(response => response.json())
+                .then(jsonResponse => console.log('Order placed!', jsonResponse))
+                .catch(error => console.error('Error:', error))
+        }
+    </script>
+    <hr/>
+</head>
+<body>
+<div class="container">
+
+    <div class="col-sm-12 col-md-12">
+        <div id="headerContainer" style="background-color: aliceblue;height: 50px">
+            <!--<img src="../images/logo.jpg" />-->
+
+            <nav class="navbar navbar-default" style="background-color: aliceblue;height: 70px">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-sm-10 col-md-10" style="font-size: large;color:green">
+                            <ul class="nav navbar-nav">
+                                <li><a href="/menu">Menu</a></li>
+                                <li><a href="/getOrders">Get Orders</a></li>
+                                <li><a href="/cart">Cart</a></li>
+                                <li><a href="/logout">LogOut</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-sm-2 col-md-2" style="font-size: large;color:green;padding-left: 105px">
+                            <img src="<%= '../images/sb.png' %>" alt="" class="logo"
+                                 style="width: 70px; height: 65px ;display: block;margin:">
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+        <form>
+            <!--<h3 style="color: darkgreen;text-align: center">Cart</h3>-->
+
+            <br/><br/>
+            <div class="row">
+
+                <div class="col-sm-3" style="font-size: large;color:green"><b>
+                        Item Name
+                    </b></div>
+                <div class="col-sm-3" style="font-size: large;color:green"><b>
+                        Price
+                    </b></div>
+                <div class="col-sm-3" style="font-size: large;color:green"><b>
+                        Quantity
+                    </b></div>
+                <div class="col-sm-3" style="font-size: large;color:green"><b>
+                        Operations
+                    </b></div>
+            </div>
+            <hr/>
+            <br/>
+            <div class="panel-group">
+                <div class="panel panel-default">
+                    <!-- Home Page -->
+                    <% if (resp == null || resp == undefined){ %>
+                    <div class="jumbotron">
+                        <h3 style="text-align: center;color: darkgreen">Your cart is empty!</h3>
+                    </div>
+                    <% }else { %>
+                    <div class="jumbotron" style="padding: 10px;margin: auto">
+                        <%
+                        if (resp.items == undefined || resp.items == null ){
+                        %>
+                        <div class="jumbotron">
+                            <h3 style="text-align: center;color: darkgreen">Your cart is empty!</h3>
+                        </div>
+                        <%
+                        }
+                        else {
+                        resp.items.forEach(function(item) { %>
+                        <% if(item.quantity > 0){ %>
+                        <div class="row">
+                            <div class="col-sm-3" style="font-size: large;color:green"><b><%= item.name %></b>
+                            </div>
+                            <div class="col-sm-3" style="font-size: large;color:green"><b> <%= item.price %></b>
+                            </div>
+                            <div class="col-sm-3" style="font-size: large;color:green">
+                                <b><%= item.quantity %></b></div>
+                            <div class="col-sm-3" style="font-size: large;color:green"><b>
+                                    <button class="btn" type="submit"
+                                            onclick="addItem('<%= JSON.stringify(item) %>')"><strong
+                                                style="color: forestgreen;font-size: 30px">+</strong></button>
+                                    <button class="btn" type="submit" name="<%= JSON.stringify(item) %>"
+                                            value="<%= resp.id %>"
+                                            onclick="deleteItem(this.value,this.name)"><strong
+                                                style="color: red;font-size: 30px">-</strong>
+                                    </button>
+                                    <button class="btn btn-success" type="submit" name="<%= JSON.stringify(item) %>"
+                                            value="<%= resp.id %>"
+                                            onclick="deleteCart(this.value,this.name)"><strong
+                                                style="color: red;font-size:25px;text-align: center;vertical-align: middle">X</strong>
+                                    </button>
+                                </b>
+                            </div>
+                            <br/>
+                        </div>
+                        <% }});} %>
+                    </div>
+                </div>
+                <br/>
+                <button class="button1" onclick="placeOrder('<%= JSON.stringify(resp) %>')">Place Order</button>
+            </div>
+        </form>
+        <% } %>
+
+    </div>
+</div>
+</body>
+
+</html>
