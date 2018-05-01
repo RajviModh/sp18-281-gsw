@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        hr {
+            background-color: darkgreen;
+            min-height: 10px;
+            margin-bottom: 0px
+        }
+    </style>
+
+    <script>
+        function addtocart(respItem) {
+            console.log("Adding to cart");
+            console.log(respItem);
+            respItem = JSON.parse(respItem);
+            console.log(respItem.name);
+            var url = 'http://localhost:8000/addToCart';
+            var data = {name: "Iced Tea", price: 10};
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => console.log('Success:', response));
+        }
+
+        function proceedToCheckout() {
+            var url = 'http://localhost:8000/proceedToCheckout';
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => res.json())
+                .catch(error => console.error('Error:', error));
+        }
+
+        function makePayment(order) {
+            let url = "http://localhost:8000/order/pay";
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify({"id": order.id}),
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => {
+                let url = "http://localhost:8000/getOrders";
+                fetch(url, {
+                    method: "GET"
+                }).catch(error => console.log(error));
+            })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+</head>
+<body>
+<div class="container">
+
+    <div class="col-sm-12 col-md-12">
+        <div id="headerContainer" style="background-color: aliceblue;height: 50px">
+            <!--<img src="../images/logo.jpg" />-->
+            <nav class="navbar navbar-default" style="background-color: aliceblue;height: 70px">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-sm-10 col-md-10" style="font-size: large;color:green">
+                            <ul class="nav navbar-nav">
+                                <li><a href="/menu">Menu</a></li>
+                                <li><a href="/getOrders">Get Orders</a></li>
+                                <li><a href="/cart">Cart</a></li>
+                                <li><a href="/logout">LogOut</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-sm-2 col-md-2" style="font-size: large;color:green;padding-left: 115px">
+                            <img src="<%= '../images/sb.png' %>" alt="" class="logo" style="width: 70px; height: 65px ;display: block;margin:">
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Home Page -->
+        <form>
+<br/><br/>
+            <div class="row">
+                <h3>Proceed to Payment</h3>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-2" style="font-size: large;color:green"><b>Drink</b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Calories
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Price
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Quantity
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Amount
+                    </b></div>
+            </div>
+
+            <%
+            if (order == undefined || order == null || order.items == undefined || order.items == null || order.items.length == 0) {
+            %>
+            <h3>No orders to show!</h3>
+            <%
+            } else {
+                console.log(order);
+                let totalAmount = 0;
+            for(let index = 0; index < order.items.length; index++) {
+                let item = order.items[index];
+                totalAmount += item.price * item.quantity; %>
+            <!-- <tr> -->
+
+
+            <div class="row">
+                <div class="col-sm-2"><%= item.name %></div>
+                <div class="col-sm-2"><%= item.calories %></div>
+                <div class="col-sm-2"><%= item.price %></div>
+                <div class="col-sm-2"><%= item.quantity %></div>
+                <div class="col-sm-2">$ <%= item.price * item.quantity %></div>
+            </div>
+            <div class="row">
+                <div class="col-sm-4 text-center"></div>
+                <div class="col-sm-3 text-center">
+                    <span id="totalAmount">Total Amount: $ <%= order.totalAmount %></span>
+                </div>
+                <div class="col-sm-3 text-center">
+                    <button type="button" class="btn btn-success" onclick="makePayment('<%= JSON.stringify(order) %>')">
+                        Make Payment
+                    </button>
+                </div>
+                <div class="col-sm-2"></div>
+            </div>
+            <% }
+
+
+            }
+            %>
+
+        </form>
+
+
+
+
+
+    </div>
+</div>
+</body>
+</html>
