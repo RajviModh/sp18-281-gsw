@@ -1,0 +1,165 @@
+<!doctype html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css">
+    <style>
+        hr {
+            background-color: darkgreen;
+            min-height: 10px;
+            margin-bottom: 0px;
+        }
+    </style>
+    <script>
+        function deleteOrder(data) {
+            console.log(data);
+            var url = 'http://localhost:8000/deleteOrder';
+            var data = {id: data};
+            fetch(url, {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            }).then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => console.log('Success:', response));
+        }
+    </script>
+    <hr>
+</head>
+<body>
+<div class="container">
+
+    <div class="col-sm-12 col-md-12">
+        <div id="headerContainer" style="background-color: aliceblue;height: 50px">
+            <!--<img src="../images/logo.jpg" />-->
+
+            <nav class="navbar navbar-default" style="background-color: aliceblue;height: 70px">
+                <div class="container-fluid">
+
+                    <div class="row">
+                        <div class="col-sm-10 col-md-10" style="font-size: large;color:green">
+                            <ul class="nav navbar-nav">
+                        <li><a href="/menu">Menu</a></li>
+                        <li><a href="/getOrders">Get Orders</a></li>
+                        <li><a href="/cart">Cart</a></li>
+                        <li><a href="/logout">LogOut</a></li>
+
+                            </ul>
+                        </div>
+                        <div class="col-sm-2 col-md-2" style="font-size: large;color:green;padding-left: 115px">
+                            <img src="<%= '../images/sb.png' %>" alt="" class="logo" style="width: 70px; height: 65px ;display: block;margin:">
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </div>
+
+        <!-- Home Page -->
+        <form>
+<br/><br/>
+            <div class="row">
+                <div class="col-sm-2" style="font-size: large;color:green">
+                    <b>#</b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        ID
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Location
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Status
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                        Total Amount
+                    </b></div>
+                <div class="col-sm-2" style="font-size: large;color:green"></div>
+            </div>
+            <hr/>
+            <br/>
+            <div class="panel-group">
+                <div class="panel panel-default">
+
+                    <!--  <table>
+                     <tbody> -->
+                    <%
+                    if (order == undefined || order == null ||  order.length == 0) {
+                        %>
+                    <h3>No orders to show.</h3>
+                    <%
+                    } else {
+                    for(let index = 0; index < order.length; ++index) { %>
+                    <!-- <tr> -->
+                    <input type="hidden" id="storedItem<%= index %>" value="<%= JSON.stringify(order[index]) %>"/>
+                    <div class="panel-heading">
+                        <h4 class="panel-title">
+                            <a data-toggle="collapse" href="#<%= index %>">
+                                <div class="row">
+                                    <div class="col-sm-2"><%= index + 1 %>.</div>
+                                    <div class="col-sm-2"><%= order[index].id %></div>
+                                    <div class="col-sm-2"><%= order[index].location %></div>
+                                    <div class="col-sm-2"><%= order[index].status %></div>
+                                    <div class="col-sm-2">$ <%= order[index].totalAmount %></div>
+                                    <div class="col-sm-2">
+                                        <button type="submit" value="<%= order[index].id %>"
+                                                onclick="deleteOrder(this.value)"><strong
+                                                    style="color: red">X</strong></button>
+                                    </div>
+                                </div>
+                            </a>
+                        </h4>
+                    </div>
+                    <!--  </tr>
+                     <tr> -->
+                    <div id="<%= index %>" class="panel-collapse collapse">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-1" style="font-size: large;color:green"></div>
+                                <div class="col-sm-2" style="font-size: large;color:green">
+                                    <b>Drink</b></div>
+                                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                                        Calories
+                                    </b></div>
+                                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                                        Price
+                                    </b></div>
+                                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                                        Quantity
+                                    </b></div>
+                                <div class="col-sm-2" style="font-size: large;color:green"><b>
+                                        Amount
+                                    </b></div>
+                                <div class="col-sm-1" style="font-size: large;color:green"></div>
+                            </div>
+                            <% let items = order[index].items;
+                            for (let index1 = 0; index1 < items.length; ++index1) {
+                                let item = items[index1];
+                            %>
+                            <div class="row">
+                                <div class="col-sm-1"></div>
+                                <div class="col-sm-2"><%= item.name %></div>
+                                <div class="col-sm-2"><%= item.calories %></div>
+                                <div class="col-sm-2"><%= item.price %></div>
+                                <div class="col-sm-2"><%= item.quantity %></div>
+                                <div class="col-sm-2">$ <%= item.price * item.quantity %></div>
+                                <div class="col-sm-1"></div>
+                            </div>
+                            <% } %>
+                        </div>
+                    </div>
+                    <% } }%>
+
+                </div>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+</body>
+
+</html>
