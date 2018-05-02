@@ -26,3 +26,58 @@ app.get('/order', function (req, res) {
     }).end();
 });
 
+app.post('/order', (request, response) => {
+    // let cart = JSON.parse(request.body);
+    let username = "";
+    if (request.session.user == undefined) {
+        username = sessioninfo;
+    } else {
+        username = req.session.user;
+    }
+
+    let items = request.body.items;
+    console.log("body:");
+    console.log(username);
+    console.log(items);
+    http.post('http://localhost:8080/starbucks/order', {
+        "username": username,
+        "items": JSON.stringify(items),
+        "location": "San Jose"
+    }, (response1) => {
+        console.log("statusCode: ", response1.statusCode); // <======= Here's the status code
+        response1.on('data', function (chunk) {
+            let order = JSON.parse(chunk);
+
+            response.render('pages/order', {
+                order: order
+            });
+        });
+
+
+    }).on('error', function (e) {
+        response.sendStatus(500);
+    }).end();
+
+});
+
+app.post('/order/pay', (request, response) => {
+    let id = request.body.id;
+    let url = "http://localhost:8080/starbucks/order/" + id;
+
+    fetch(url, {
+        method: 'PUT', // or 'PUT'
+        headers: new Headers({
+            'Content-Type': 'application/json'
+        })
+    }).then(res => res.json()
+    )
+        .then(jsonResponse => {
+            console.log(jsonResponse);
+            response.sendStatus(200).end();
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            response.sendStatus(400).end();
+        });
+
+});
