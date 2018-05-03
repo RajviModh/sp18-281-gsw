@@ -26,6 +26,51 @@ app.get('/order', function (req, res) {
     }).end();
 });
 
+app.post('/login', function(req, res) {
+    var uname = req.body.username;
+    var pass = req.body.password;
+    req.session.user = uname;
+    http.post('http://localhost:8080/login',{'email':uname,'password':pass}, function(response) {
+        //console.log("statusCode: ", response); // <======= Here's the status code
+        if(response.statusCode == 200) {
+            http.get('http://localhost:8080/starbucks/getMenu', function(response) {
+                //console.log("--------" + response);
+                console.log("After response")
+                response.on('data',function (chunk){
+                    res.render('pages/home', {
+                        resp: JSON.parse(chunk)
+                    });
+                });
+            }).on('error', function(e) {
+                res.sendStatus(500);
+            }).end();
+        }
+    }).on('error', function(e) {
+        res.sendStatus(500);
+    }).end();
+});
+
+app.post('/addToCart', function(req, res) {
+    http.post('http://localhost:8080/starbucks/addToCart',{'name':req.body.name,'price':req.body.price,'calories':req.body.calories,'username':req.session.user},   function(response) {
+        
+        //console.log(response.status)
+        /*if(response.statusCode==200){
+            window.alert("Item added to cart");
+        }else{
+            window.alert("Item could not be added.Please try again..");
+        }*/
+        response.on('data',function (chunk){
+            console.log(JSON.parse(chunk)); 
+            res.render('pages/home', {
+                resp: JSON.parse(chunk)
+            });
+        });
+    }).on('error', function(e) {
+        res.sendStatus(500);
+    }).end();
+});
+
+
 app.post('/order', (request, response) => {
     // let cart = JSON.parse(request.body);
     let username = "";
