@@ -81,3 +81,47 @@ app.post('/order/pay', (request, response) => {
         });
 
 });
+
+app.get('/getOrders', function (req, res) {
+    console.log("kkk" + req.session.user)
+    http.get('http://localhost:8080/starbucks/orders/' + req.session.user, function (response) {
+        console.log("--------" + response);
+        response.on('data', function (chunk) {
+            res.render('pages/getOrders', {
+                order: JSON.parse(chunk)
+            });
+        });
+    }).on('error', function (e) {
+        res.sendStatus(500);
+    }).end();
+});
+
+app.post('/deleteOrder', function (req, res) {
+    var id = req.body.id;
+    var abc = encodeURI(id);
+    console.log("************************", abc);
+    http.post('http://localhost:8080/starbucks/delOrder', {'id': abc}, function (response) {
+        response.on('data', function (chunk) {
+
+        });
+    }).on('error', function (e) {
+        res.sendStatus(500);
+    }).end();
+});
+
+app.get('/order/:id', function (req, res) {
+    let order = req.params.id;
+    console.log("GET /order user:", req.session.user);
+    http.get('http://localhost:8080/starbucks/order/' + order, function (response) {
+        //console.log("--------" + response);
+
+        response.on('data', function (chunk) {
+            console.log(JSON.parse(chunk));
+            res.render('pages/order', {
+                order: JSON.parse(chunk)
+            });
+        });
+    }).on('error', function (e) {
+        res.sendStatus(500);
+    }).end();
+});
