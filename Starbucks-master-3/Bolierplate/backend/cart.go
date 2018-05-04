@@ -3,18 +3,35 @@ package main
 import (
 	"fmt"
 	"gopkg.in/mgo.v2/bson"
+	"net/http"
+	"encoding/json"
 )
 
-type Cart struct {
-	CartId   string  `json:"id" bson:"_id"`
-	Items    []Item1 `json:"items" bson:"Items"`
-	Username string  `json:"username" bson:"Username"`
-}
 
 
 //-----------------------------------------------------------Code Goes Here------------------------------------------------------------------
 
 
+// GetCartItems retrieves all the cart orders
+func (oc OrderController) GetCartItems(w http.ResponseWriter, r *http.Request) {
+
+	var cart []Cart
+	iter := oc.session.DB("test").C("Cart").Find(nil).Iter()
+	result := Cart{}
+	for iter.Next(&result) {
+		cart = append(cart, result)
+	}
+
+	for _, cart := range cart {
+		fmt.Println("--****************************- ", cart.Username, cart.Items)
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+
+	w.WriteHeader(200)
+	json.NewEncoder(w).Encode(&cart)
+
+}
 
 //-----------------------------------------------------------Function Goes Here----------------------------------------------------------------
 
