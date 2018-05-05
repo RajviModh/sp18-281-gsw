@@ -17,7 +17,7 @@
             //console.log(respItem);
             respItem = JSON.parse(respItem);
             //console.log(respItem.name);
-            var url = 'http://localhost:8000/addToCart';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/addToCart';
             var data = respItem;
 
             fetch(url, {
@@ -32,7 +32,7 @@
         }
 
         function proceedToCheckout(){
-            var url = 'http://localhost:8000/proceedToCheckout';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/proceedToCheckout';
 
             fetch(url, {
                 method: 'GET', // or 'PUT'
