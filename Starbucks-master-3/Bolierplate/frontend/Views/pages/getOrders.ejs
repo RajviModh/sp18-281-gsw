@@ -16,7 +16,7 @@
     <script>
         function deleteOrder(data) {
             console.log(data);
-            var url = 'http://localhost:8000/deleteOrder';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/deleteOrder';
             var data = {id: data};
             fetch(url, {
                 method: 'POST', // or 'PUT'
