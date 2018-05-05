@@ -45,7 +45,7 @@
         function addItem(data) {
             console.log(data);
             data = JSON.parse(data);
-            var url = 'http://localhost:8000/incrementItem';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/incrementItem';
             fetch(url, {
                 method: 'POST', // or 'PUT'
                 body: JSON.stringify(data), // data can be `string` or {object}!
@@ -63,7 +63,7 @@
         function deleteItem(id, data) {
             console.log(id);
             console.log(data);
-            var url = 'http://localhost:8000/deleteItem';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/deleteItem';
             data = {id: id, data: data};
             fetch(url, {
                 method: 'POST', // or 'PUT'
@@ -82,7 +82,7 @@
         function deleteCart(id, data) {
             //console.log(id);
             // console.log(data);
-            var url = 'http://localhost:8000/deleteCart';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/deleteCart';
             var data = {id: id, data: data};
             fetch(url, {
                 method: 'POST', // or 'PUT'
@@ -102,7 +102,7 @@
             console.log("cart:" + cart)
             cart = JSON.parse(cart);
             console.log(cart);
-            let url = 'http://localhost:8000/order';
+            let url = 'https://madhurgor-project-cmpe281.herokuapp.com/order';
             fetch(url, {
                 method: 'POST', // or 'PUT'
                 body: JSON.stringify(cart), // data can be `string` or {object}!
