@@ -74,52 +74,77 @@ func (oc OrderController) GetOrders(w http.ResponseWriter, r *http.Request) {
 // Add to cart
 
 func (oc OrderController) AddToCart(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("AddToCart()")
+	var CartId uuid.UUID
+	CartId, _ = uuid.NewV4()
 
-	cart := Cart{}
-	//username := r.FormValue("username")
-	//username := "Rajvi"
 	name := r.FormValue("name")
 	price, _ := strconv.Atoi(r.FormValue("price"))
 	calories, _ := strconv.Atoi(r.FormValue("calories"))
+	username := r.FormValue("username")
+	fmt.Println(username)
+	fmt.Println(name)
+	fmt.Println(price)
+	fmt.Println(calories)
+
+	/*
+		fname := r.FormValue("fname")
+		lname := r.FormValue("lname")
+		uname := r.FormValue("email")
+		pass := r.FormValue("password")
+		loc := r.FormValue("location")
+	*/
+
+	cart := Cart{}
+	var item2 Item2
+	json.NewDecoder(r.Body).Decode(&item2)
+	//username := item2.Username
+	//name := item2.Name
+	//price := item2.Price
+	//calories := item2.Calories
+
+	//username := r.FormValue("username")
+	//fmt.Println("username:" + username)
+	//name := r.FormValue("name")
+	//price, _ := strconv.Atoi(r.FormValue("price"))
+	//calories, _ := strconv.Atoi(r.FormValue("calories"))
 	quantity := 1
-	
 	//fmt.Println(name)
 	//fmt.Println(price)
 	//fmt.Println(calories)
-	item := Item1{name,calories,price, quantity}
+	item := Item1{name, calories, price, quantity}
 	if error := oc.session.DB("test").C("Cart").Find(bson.M{"Username": username}).One(&cart); error != nil {
 		fmt.Println("errors:", error)
-	
-	var items []Item1
-		
-	items = append(items, item)
-	cart = Cart{items, username}
-	error = oc.session.DB("test").C("Cart").Insert(&cart)
-	fmt.Println("errors:", error)
+		fmt.Println("means there isn't a cart for this user")
+
+		var items []Item1
+
+		items = append(items, item)
+		cart = Cart{CartId.String(), items, username}
+		error = oc.session.DB("test").C("Cart").Insert(&cart)
+		fmt.Println("errors:", error)
 	} else {
-		if error := oc.session.DB("test").C("Cart").Find(bson.M{"Items.Name": name}).One(&cart); error == nil {
-			//means there's a cart with this item
-			fmt.Println("means there's a cart with this item")
-			fmt.Println(cart)
 
-			for i := 0; i < len(cart.Items); i++ {
-				if(cart.Items[i].Name == name){
-					cart.Items[i].Quantity += 1
-					break
-				}
+		//means there's a cart with this item
+		fmt.Println("means there's a cart for this user")
+		fmt.Println(cart)
+		index := 0
+		for index = 0; index < len(cart.Items); index++ {
+			if (cart.Items[index].Name == name) {
+				break
 			}
+		}
 
-			if error := oc.session.DB("test").C("Cart").Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Items": cart.Items}}); error != nil {
-				fmt.Println(error)
-			}
-
+		if (index == len(cart.Items)) {
+			fmt.Println("means the cart doesn't have this item")
+			cart.Items = append(cart.Items, item)
 		} else {
-			//means there isn't an item
-			fmt.Println("means there isn't an item")
-			cart.Items = append (cart.Items, item)
-			if error := oc.session.DB("test").C("Cart").Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Items": cart.Items}}); error != nil {
-				fmt.Println(error)
-			}
+			fmt.Println("means the cart has this item")
+			cart.Items[index].Quantity += 1
+		}
+
+		if error := oc.session.DB("test").C("Cart").Update(bson.M{"Username": username}, bson.M{"$set": bson.M{"Items": cart.Items}}); error != nil {
+			fmt.Println(error)
 		}
 
 	}
@@ -129,7 +154,8 @@ func (oc OrderController) AddToCart(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(200)
 
-	data := `{"status":"success","message":"Change successful"}`
-	json.NewEncoder(w).Encode(data)
+	oc.session.DB("test").C("Cart").Find(bson.M{"Username": username}).One(&cart)
+	fmt.Println(cart)
+	json.NewEncoder(w).Encode(cart)
 }
 
