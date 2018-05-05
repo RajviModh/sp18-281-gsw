@@ -133,17 +133,3 @@ func (oc OrderController) AddToCart(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(data)
 }
 
-func main() {
-
-	r := mux.NewRouter()
-
-	// Get a UserController instance
-	oc := NewOrderController(getSession())
-	r.Methods("OPTIONS").HandlerFunc(IgnoreOption)
-
-	r.HandleFunc("/starbucks/getMenu", oc.GetOrders).Methods("GET")
-	r.HandleFunc("/starbucks/addToCart", oc.AddToCart).Methods("POST")
-	fmt.Println("serving on port" + GetPort())
-	http.ListenAndServe(GetPort(), r)
-
-}
