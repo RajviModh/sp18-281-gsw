@@ -45,3 +45,14 @@
 **Challenges Faced:**
 1. Rectifying conflicts became difficult when too many code commits were done.
 2. Deciding design for the application.
+
+
+## 04/30/2018 - 05/04/2018 Week 4
+**Tasks Done:**
+1. Completed front end of entire application.
+2. Testing of the application.
+3. Deploying application on Heroku. 
+
+**Challenges Faced:**
+1. Some portion of application working fine on localhost while having issues working on cloud.
+2. Maintaining mongodb nodes, go server and heroku for all five modules took quiet a lot of time.
