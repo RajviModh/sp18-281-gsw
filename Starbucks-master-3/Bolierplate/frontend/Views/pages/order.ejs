@@ -21,7 +21,7 @@
             console.log(respItem);
             respItem = JSON.parse(respItem);
             console.log(respItem.name);
-            var url = 'http://localhost:8000/addToCart';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/addToCart';
             var data = {name: "Iced Tea", price: 10};
             fetch(url, {
                 method: 'POST', // or 'PUT'
@@ -35,7 +35,7 @@
         }
 
         function proceedToCheckout() {
-            var url = 'http://localhost:8000/proceedToCheckout';
+            var url = 'https://madhurgor-project-cmpe281.herokuapp.com/proceedToCheckout';
             fetch(url, {
                 method: 'POST', // or 'PUT'
                 headers: new Headers({
@@ -46,7 +46,7 @@
         }
 
         function makePayment(order) {
-            let url = "http://localhost:8000/order/pay";
+            let url = "https://madhurgor-project-cmpe281.herokuapp.com/order/pay";
             fetch(url, {
                 method: 'POST', // or 'PUT'
                 body: JSON.stringify({"id": order.id}),
@@ -54,7 +54,7 @@
                     'Content-Type': 'application/json'
                 })
             }).then(res => {
-                let url = "http://localhost:8000/getOrders";
+                let url = "https://madhurgor-project-cmpe281.herokuapp.com/getOrders";
                 fetch(url, {
                     method: "GET"
                 }).catch(error => console.log(error));
