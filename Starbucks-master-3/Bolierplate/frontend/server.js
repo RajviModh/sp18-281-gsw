@@ -39,7 +39,7 @@ app.get('/', function (req, res) {
 });
 
 app.get('/signup', function (req, res) {
-    http.get('http://localhost:8080/', function (response) {
+    http.get('http://18.144.44.120:8080/', function (response) {
         //console.log(response.body);
         response.on('data', function (chunk) {
             res.render('pages/signup', {
@@ -60,7 +60,7 @@ app.post('/proceedToCheckout', function (req, res) {
 app.post('/addToCart', function (req, res) {
     //console.log("sssss"+req.session.user)
     //console.log(sessioninfo)
-    http.post('http://localhost:8080/starbucks/addToCart', {
+    http.post('http://18.144.44.120:8080/starbucks/addToCart', {
         'name': req.body.name,
         'price': req.body.price,
         'calories': req.body.calories,
@@ -89,7 +89,7 @@ app.post('/submitSignUp', function (req, res) {
     var uname = req.body.username;
     var pass = req.body.cpassword;
     var loc = req.body.location;
-    http.post('http://localhost:8080/submitSignUp', {
+    http.post('http://18.144.44.120:8080/submitSignUp', {
         'fname': fname,
         'lname': lname,
         'email': uname,
@@ -107,7 +107,7 @@ app.post('/submitSignUp', function (req, res) {
 
 app.get('/menu', (request, response) => {
     let username = request.session.user;
-    http.get('http://localhost:8080/starbucks/getMenu', function (response1) {
+    http.get('http://18.144.44.120:8080/starbucks/getMenu', function (response1) {
         //console.log("--------" + response);
         console.log("After response");
         response1.on('data', function (chunk) {
@@ -125,11 +125,11 @@ app.post('/login', function (req, res) {
     var pass = req.body.password;
     req.session.user = uname;
     sessioninfo = uname;
-    http.post('http://localhost:8080/login', {'email': uname, 'password': pass}, function (response) {
+    http.post('http://18.144.44.120:8080/login', {'email': uname, 'password': pass}, function (response) {
         console.log("statusCode: ", response); // <======= Here's the status code
         if (response.statusCode == 200) {
             console.log("kkkk" + req.session.user)
-            http.get('http://localhost:8080/starbucks/getMenu', function (response) {
+            http.get('http://18.144.44.120:8080/starbucks/getMenu', function (response) {
                 //console.log("--------" + response);
                 console.log("After response");
                 response.on('data', function (chunk) {
@@ -193,7 +193,7 @@ app.post('/incrementItem', function (req, res) {
     } else {
         username = req.session.user;
     }
-    http.post('http://localhost:8080/starbucks/addToCart', {
+    http.post('http://18.144.44.120:8080/starbucks/addToCart', {
         'name': name,
         'price': price,
         'calories': calories,
@@ -221,7 +221,7 @@ app.post('/incrementItem', function (req, res) {
 
 app.get('/logout', function (req, res) {
     console.log("sssss" + req.session.user)
-    http.get('http://localhost:8080/logout', function (response) {
+    http.get('http://18.144.44.120:8080/logout', function (response) {
         req.session.reset();
         console.log("statusCode: ", response); // <======= Here's the status code
         if (response.statusCode == 200) {
@@ -249,7 +249,7 @@ app.get('/logout', function (req, res) {
 
 app.get('/getOrders', function (req, res) {
     console.log("kkk" + req.session.user)
-    http.get('http://localhost:8080/starbucks/orders/' + req.session.user, function (response) {
+    http.get('http://18.144.44.120:8080/starbucks/orders/' + req.session.user, function (response) {
         console.log("--------" + response);
         response.on('data', function (chunk) {
             res.render('pages/getOrders', {
@@ -265,7 +265,7 @@ app.post('/deleteOrder', function (req, res) {
     var id = req.body.id;
     var abc = encodeURI(id);
     console.log("************************", abc);
-    http.post('http://localhost:8080/starbucks/delOrder', {'id': abc}, function (response) {
+    http.post('http://13.57.41.159:8080/starbucks/delOrder', {'id': abc}, function (response) {
         response.on('data', function (chunk) {
 
         });
@@ -290,7 +290,7 @@ app.post('/deleteOrder', function (req, res) {
 
 app.get('/cart', function (req, res) {
     console.log("^^^^^^^^^session^^^^^^^^^^^^^^", req.session.user);
-    http.get('http://localhost:8080/starbucks/cart/' + req.session.user, function (response) {
+    http.get('http://13.57.41.159:8080/starbucks/cart/' + req.session.user, function (response) {
         //console.log("--------" + response);
 
         response.on('data', function (chunk) {
@@ -308,7 +308,7 @@ app.post('/addItem', function (req, res) {
     var data = req.body.data
     var abc = encodeURI(id);
     console.log("************************", abc, data);
-    http.post('http://localhost:8080/starbucks/cart/addItem', {'id': abc, 'data': data}, function (response) {
+    http.post('http://13.57.41.159:8080/starbucks/cart/addItem', {'id': abc, 'data': data}, function (response) {
         console.log("statusCode: ", response.statusCode); // <======= Here's the status code
         if (response.statusCode == 200) {
             // response.redirect('http://localhost:8000/cart')
@@ -324,7 +324,7 @@ app.post('/deleteItem', function (req, res) {
     var data = req.body.data;
     var abc = encodeURI(id);
     console.log("************************", abc, data);
-    http.post('http://localhost:8080/starbucks/cart/quantity', {'id': abc, 'data': data}, function (response) {
+    http.post('http://13.57.41.159:8080/starbucks/cart/quantity', {'id': abc, 'data': data}, function (response) {
         console.log("statusCode: ", response.statusCode); // <======= Here's the status code
         if (response.statusCode == 200) {
             res.render('pages/home', {});
@@ -339,7 +339,7 @@ app.post('/deleteCart', function (req, res) {
     var data = req.body.data;
     var abc = encodeURI(id);
     console.log("************************", abc, data);
-    http.post('http://localhost:8080/starbucks/cart/delete', {'id': abc, 'data': data}, function (response) {
+    http.post('http://13.57.41.159:8080/starbucks/cart/delete', {'id': abc, 'data': data}, function (response) {
         console.log("statusCode: ", response.statusCode); // <======= Here's the status code
         if (response.statusCode == 200) {
             res.render('pages/home', {});
@@ -352,7 +352,7 @@ app.post('/deleteCart', function (req, res) {
 app.get('/order/:id', function (req, res) {
     let order = req.params.id;
     console.log("GET /order user:", req.session.user);
-    http.get('http://localhost:8080/starbucks/order/' + order, function (response) {
+    http.get('http://13.57.41.159:8080/starbucks/order/' + order, function (response) {
         //console.log("--------" + response);
 
         response.on('data', function (chunk) {
@@ -399,7 +399,7 @@ app.post('/order', (request, response) => {
 
 app.post('/order/pay', (request, response) => {
     let id = request.body.id;
-    let url = "http://localhost:8080/starbucks/order/" + id;
+    let url = "http://13.57.41.159:8080/starbucks/order/" + id;
 
     fetch(url, {
         method: 'PUT', // or 'PUT'
